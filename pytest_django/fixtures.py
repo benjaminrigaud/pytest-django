@@ -12,8 +12,8 @@ from .django_compat import is_django_unittest
 
 from .lazy_django import get_django_version, skip_if_no_django
 
-__all__ = ['django_db_setup', 'db', 'transactional_db', 'admin_user',
-           'django_user_model', 'django_username_field',
+__all__ = ['django_db_setup', 'db', 'transactional_db', 'multi_db',
+           'admin_user', 'django_user_model', 'django_username_field',
            'client', 'admin_client', 'rf', 'settings', 'live_server',
            '_live_server_helper']
 
@@ -107,7 +107,8 @@ def django_db_setup(
         request.addfinalizer(teardown_database)
 
 
-def _django_db_fixture_helper(transactional, request, django_db_blocker):
+def _django_db_fixture_helper(transactional, request,
+                              django_db_blocker, multi_db=False):
     if is_django_unittest(request):
         return
 
@@ -124,6 +125,7 @@ def _django_db_fixture_helper(transactional, request, django_db_blocker):
         from django.test import TestCase as django_case
 
     test_case = django_case(methodName='__init__')
+    test_case.multi_db = multi_db
     test_case._pre_setup()
     request.addfinalizer(test_case._post_teardown)
 
@@ -172,6 +174,25 @@ def transactional_db(request, django_db_setup, django_db_blocker):
     requested.
     """
     _django_db_fixture_helper(True, request, django_db_blocker)
+
+
+@pytest.fixture(scope='function')
+def multi_db(request, django_db_setup, django_db_blocker):
+    """Require a django test database
+
+    This behaves like the ``db`` fixture, with the addition of marking
+    the test as multi_db for django test case purposes. Using this fixture
+    is equivalent to marking your TestCase class as ``multi_db = True``.
+
+    If both this and ``transactional_db`` are requested then the
+    database setup will behave as only ``transactional_db`` was
+    requested.
+    """
+    if 'transactional_db' in request.funcargnames \
+            or 'live_server' in request.funcargnames:
+        request.getfuncargvalue('transactional_db')
+    else:
+        _django_db_fixture_helper(False, request, django_db_blocker, multi_db=True)
 
 
 @pytest.fixture()
