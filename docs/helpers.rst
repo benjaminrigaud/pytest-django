@@ -26,7 +26,7 @@ of the test. This behavior is the same as Django's standard
 
 In order for a test to have access to the database it must either
 be marked using the ``django_db`` mark or request one of the ``db``,
-``transactional_db`` or ``multi_db`` fixtures.  Otherwise the test will
+``transactional_db`` or ``django_multi_db`` fixtures.  Otherwise the test will
 fail when trying to access the database.
 
 :type transaction: bool
@@ -52,7 +52,7 @@ fail when trying to access the database.
   this marker will not help even if the function requesting your
   fixture has this marker applied.  To access the database in a
   fixture, the fixture itself will have to request the ``db``,
-  ``transactional_db`` or ``multi_db`` fixture.  See below for a
+  ``transactional_db`` or ``django_multi_db`` fixture.  See below for a
   description of them.
 
 .. note:: Automatic usage with ``django.test.TestCase``.
@@ -201,8 +201,8 @@ transaction support.  This is only required for fixtures which need
 database access themselves.  A test function would normally use the
 :py:func:`~pytest.mark.django_db` mark to signal it needs the database.
 
-``multi_db``
-~~~~~~~~~~~~
+``django_multi_db``
+~~~~~~~~~~~~~~~~~~
 
 This fixture can be used to request access to the database including
 multiple database support.  This is only required for fixtures which

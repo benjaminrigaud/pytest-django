@@ -56,11 +56,11 @@ class TestDatabaseFixtures:
 
         assert not connection.in_atomic_block
 
-    def test_multi_db_enabled(self, multi_db):
+    def test_multi_db_enabled(self, django_multi_db):
         # TODO
         pass
 
-    def test_multi_db_transactions_enabled(self, transactional_db, multi_db):
+    def test_multi_db_transactions_enabled(self, transactional_db, django_multi_db):
         # TODO
         pass
 

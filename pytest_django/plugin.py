@@ -30,7 +30,7 @@ from .fixtures import django_username_field  # noqa
 from .fixtures import live_server  # noqa
 from .fixtures import rf  # noqa
 from .fixtures import settings  # noqa
-from .fixtures import transactional_db, multi_db  # noqa
+from .fixtures import transactional_db, django_multi_db  # noqa
 
 from .lazy_django import (django_settings_is_configured,
                           get_django_version, skip_if_no_django)
@@ -364,7 +364,7 @@ def _django_db_marker(request):
     """Implement the django_db marker, internal to pytest-django.
 
     This will dynamically request the ``db``, ``transactional_db``
-    or ``multi_db`` fixtures as required by the django_db marker.
+    or ``django_multi_db`` fixtures as required by the django_db marker.
     """
     marker = request.keywords.get('django_db', None)
     if marker:
@@ -372,7 +372,7 @@ def _django_db_marker(request):
         if marker.transaction:
             request.getfuncargvalue('transactional_db')
         elif marker.multi_db:
-            request.getfuncargvalue('multi_db')
+            request.getfuncargvalue('django_multi_db')
         else:
             request.getfuncargvalue('db')
 
