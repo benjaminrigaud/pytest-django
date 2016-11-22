@@ -124,8 +124,8 @@ def _django_db_fixture_helper(transactional, request,
     else:
         from django.test import TestCase as django_case
 
+    django_case.multi_db = ('django_multi_db' in request.fixturenames)
     test_case = django_case(methodName='__init__')
-    test_case.multi_db = multi_db
     test_case._pre_setup()
     request.addfinalizer(test_case._post_teardown)
 
@@ -192,7 +192,7 @@ def django_multi_db(request, django_db_setup, django_db_blocker):
             or 'live_server' in request.funcargnames:
         request.getfuncargvalue('transactional_db')
     else:
-        _django_db_fixture_helper(False, request, django_db_blocker, multi_db=True)
+        request.getfuncargvalue('db')
 
 
 @pytest.fixture()
